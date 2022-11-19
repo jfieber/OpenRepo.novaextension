@@ -1,0 +1,50 @@
+{
+    "identifier": "org.ursamaris.nova.OpenRepo",
+    "name": "Open Repository",
+    "organization": "John Fieber",
+    "description": "Open a git repository quickly",
+    "version": "1.0",
+    "categories": ["commands"],
+    "keywords": ["git"],
+    "license": "MIT",
+    "repository": "https://github.com/jfieber/OpenRepo.novaextension",
+    "bugs": "https://github.com/jfieber/OpenRepo.novaextension/issues",
+
+    "main": "main.js",
+
+    "activationEvents": ["*"],
+
+    "entitlements": {
+        "filesystem": "readonly",
+        "process": true
+    },
+
+    "config": [
+        {
+            "key": "org.ursamaris.nova.OpenRepo.path",
+            "title": "Path",
+            "description": "The root of git repositories",
+            "type": "path",
+            "allowFiles": false,
+            "allowFolders": true,
+            "default": "~/src"
+        },
+        {
+            "key": "org.ursamaris.nova.OpenRepo.recurseDepth",
+            "title": "Search depth",
+            "description": "Search at most this many levels below the Path for git repositories",
+            "type": "number",
+            "default": 3,
+            "min": 1
+        }
+    ],
+
+    "commands": {
+        "extensions": [
+            {
+                "title": "Open Repository",
+                "command": "org.ursamaris.nova.OpenRepo.cmd.open"
+            }
+        ]
+    }
+}
