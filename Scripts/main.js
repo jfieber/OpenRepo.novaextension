@@ -25,30 +25,14 @@ nova.commands.register(ns('cmd.open'), () => {
                 if (selectedPath) {
                     const spath = nova.path.join(root, selectedPath);
                     console.info(`The path selected is ${spath}`);
-                    launchNova(spath);
+                    nova.openURL(
+                        `nova://open?path=${encodeURIComponent(spath)}`
+                    );
                 }
             }
         );
     }
 });
-
-function launchNova(selectedPath) {
-    var options = {
-        args: ['-a', 'Nova', selectedPath],
-        cwd: selectedPath,
-    };
-    var process = new Process('/usr/bin/open', options);
-    process.onStdout(function (line) {
-        console.log(line);
-    });
-    process.onStderr(function (line) {
-        console.log(line);
-    });
-    process.onDidExit(function (rc) {
-        console.log(`open ${options.args.join(' ')} exited ${rc}`);
-    });
-    process.start();
-}
 
 function findRepoPaths(repoPath, depth) {
     if (depth > nova.config.get(ns('recurseDepth'))) {
