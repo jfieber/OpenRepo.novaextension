@@ -3,8 +3,8 @@
     "name": "Open Repository",
     "organization": "John Fieber",
     "description": "Open a git repository quickly",
-    "version": "1.1",
-    "min_runtime": "11",
+    "version": "1.2",
+    "min_runtime": "11.0",
     "categories": ["commands"],
     "keywords": ["git"],
     "license": "MIT",
@@ -16,8 +16,7 @@
     "activationEvents": ["*"],
 
     "entitlements": {
-        "filesystem": "readonly",
-        "process": true
+        "filesystem": "readonly"
     },
 
     "config": [
