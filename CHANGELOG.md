@@ -9,3 +9,7 @@ Open Nova with a URL handler instead of `open -a Nova`.
 ## Version 1.2
 
 Fix entitlements and minimum runtime
+
+## Version 1.3
+
+Handle git worktrees

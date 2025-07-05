@@ -55,6 +55,24 @@ function findRepoPaths(repoPath, depth) {
 }
 
 function isGitRepo(repoPath) {
-    const stats = nova.fs.stat(nova.path.join(repoPath, '.git', 'config'));
-    return stats !== null && stats !== undefined && stats.isFile();
+    const gitPath = nova.path.join(repoPath, '.git');
+    const stats = nova.fs.stat(gitPath);
+    if (stats !== null && stats !== undefined) {
+        // normal git directory
+        if (stats.isDirectory()) {
+            return true;
+        }
+        // git worktree
+        if (stats.isFile()) {
+            const f = nova.fs.open(gitPath, "r");
+            if (f !== null && f !== undefined) {
+                const l = f.readline();
+                if (l.match(/gitdir:/) != null) {
+                    return true;
+                }
+            }
+            return true;
+        }
+    }
+    return false;
 }
