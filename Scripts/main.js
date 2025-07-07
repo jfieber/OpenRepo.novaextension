@@ -5,14 +5,24 @@ function ns(name) {
 
 // Invoked by the "Open Repository" command
 nova.commands.register(ns('cmd.open'), () => {
-    root = nova.path.expanduser(nova.config.get(ns('path')));
-    paths = findRepoPaths(root, 0);
+    const root = nova.path.expanduser(nova.config.get(ns('path')));
 
-    shortpaths = paths
-        .map((p) => {
-            return p.replace(root, '').replace(/^\//, '');
-        })
-        .sort();
+    // reverse sort by mtime
+    paths = findRepoPaths(root, 0).sort((a, b) => {
+        if (a.m === b.m) {
+            return 0;
+        }
+        if (a.m < b.m) {
+            return 1;
+        }
+        return -1;
+    });
+
+    // digest for what we'll give to showChoicePalette()
+    shortpaths = paths.map((p) => {
+        return p.p.replace(root, '').replace(/^\//, '');
+    });
+
     if (shortpaths.length < 1) {
         nova.workspace.showErrorMessage(
             `No git repositories found in:\n\n${root}`
@@ -34,13 +44,20 @@ nova.commands.register(ns('cmd.open'), () => {
     }
 });
 
+// Return an array of objects with the structure containing the path
+// and the modified time of the .git directory.
+// {
+//    p: "filepath",
+//    m: mtime
+// }
 function findRepoPaths(repoPath, depth) {
     if (depth > nova.config.get(ns('recurseDepth'))) {
         return [];
     }
 
-    if (isGitRepo(repoPath)) {
-        return [repoPath];
+    const found = isGitRepo(repoPath);
+    if (found !== null) {
+        return found;
     }
 
     var subdirs;
@@ -60,19 +77,18 @@ function isGitRepo(repoPath) {
     if (stats !== null && stats !== undefined) {
         // normal git directory
         if (stats.isDirectory()) {
-            return true;
+            return [{ p: repoPath, m: stats.mtime }];
         }
         // git worktree
         if (stats.isFile()) {
-            const f = nova.fs.open(gitPath, "r");
+            const f = nova.fs.open(gitPath, 'r');
             if (f !== null && f !== undefined) {
                 const l = f.readline();
                 if (l.match(/gitdir:/) != null) {
-                    return true;
+                    return [{ p: repoPath, m: stats.mtime }];
                 }
             }
-            return true;
         }
     }
-    return false;
+    return null;
 }

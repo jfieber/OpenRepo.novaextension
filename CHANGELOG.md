@@ -13,3 +13,7 @@ Fix entitlements and minimum runtime
 ## Version 1.3
 
 Handle git worktrees
+
+## Version 1.4
+
+Sort the selection list by modification time of the `.git` folder, newest to oldest. This allows recently worked in repositories to bubble to the top.
